@@ -40,7 +40,8 @@ enum BeepSound {
 }
 
 /// A short scan beep, like a handheld barcode scanner.
-/// The sound is made once at startup. Each play only schedules the buffer, so it never waits on audio.
+/// The sound is made once at startup. Audio output runs only around each beep, so an idle scanner
+/// does not keep the speaker on or stop the Mac from sleeping.
 @MainActor
 final class Beeper {
   private let engine = AVAudioEngine()
@@ -48,6 +49,7 @@ final class Beeper {
   private let buffer: AVAudioPCMBuffer?
   private let duration: Double
   private var endsAt = Date.distantPast
+  private var pauseTimer: Timer?
 
   /// Nil when the sound is "off" or unknown.
   init?(sound: String) {
@@ -63,27 +65,34 @@ final class Beeper {
     engine.attach(player)
     engine.connect(player, to: engine.mainMixerNode, format: format)
     engine.prepare()
-    // Start the player now. Its first start takes a few milliseconds, and a scan must not wait.
-    try? engine.start()
-    player.play()
   }
 
   /// Plays the beep. A new beep cuts off the one before it.
   func play() {
     guard let buffer else { return }
-    // The engine stops when the output device changes. Start it again on demand.
     if !engine.isRunning {
       do { try engine.start() } catch { return }
     }
     player.scheduleBuffer(buffer, at: nil, options: .interrupts)
     if !player.isPlaying { player.play() }
     endsAt = Date().addingTimeInterval(duration)
+    // Stop audio output shortly after the beep. A quick next scan reuses the running output.
+    pauseTimer?.invalidate()
+    pauseTimer = Timer.scheduledTimer(withTimeInterval: duration + 0.5, repeats: false) { [weak self] _ in
+      MainActor.assumeIsolated { self?.pause() }
+    }
+  }
+
+  private func pause() {
+    player.stop()
+    engine.pause()
   }
 
   /// Waits until the last beep ends, so the process does not exit in the middle of it.
   func waitUntilDone() {
     let remaining = endsAt.timeIntervalSinceNow
     if remaining > 0 { Thread.sleep(forTimeInterval: min(remaining + 0.02, 0.3)) }
+    pauseTimer?.invalidate()
     engine.stop()
   }
 
