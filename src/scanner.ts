@@ -2,10 +2,9 @@ import { getPreferenceValues } from "@raycast/api";
 
 export const PID_KEY = "scannerPid";
 
-type ScannerOptions = Pick<Preferences, "suffix" | "gsSeparator" | "gsReplacement" | "camera"> & {
+type ScannerOptions = Pick<Preferences, "suffix" | "gsSeparator" | "gsReplacement" | "camera" | "beep"> & {
   symbologies: string[];
   dedupeSeconds: number;
-  beep: boolean;
   timeoutSeconds?: number;
 };
 

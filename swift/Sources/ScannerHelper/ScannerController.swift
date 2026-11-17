@@ -46,7 +46,7 @@ final class ScannerController: NSObject, NSWindowDelegate {
   init(options: ScannerOptions, once: Bool) {
     self.options = options
     self.once = once
-    beeper = options.beep ? Beeper() : nil
+    beeper = Beeper(sound: options.beep)
     panel = ScannerPanel(
       contentRect: NSRect(x: 0, y: 0, width: 340, height: 330),
       styleMask: [.titled, .closable, .utilityWindow, .nonactivatingPanel],

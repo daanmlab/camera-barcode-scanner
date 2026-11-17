@@ -2,7 +2,7 @@
 
 ## [Scan Beep] - {PR_MERGE_DATE}
 
-- Play a short beep on each scan, like a handheld barcode scanner. Turn it off with Beep on Scan.
+- Play a short beep on each scan, like a handheld barcode scanner. Choose the sound, or turn it off, with Beep Sound.
 
 ## [Initial Version] - {PR_MERGE_DATE}
 

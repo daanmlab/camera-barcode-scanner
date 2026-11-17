@@ -9,7 +9,7 @@ struct ScannerOptions: Decodable {
   var dedupeSeconds = 2.0
   var camera = "auto"
   var timeoutSeconds = 30.0
-  var beep = true
+  var beep = "piezo"
 
   static let allSymbologyIds = [
     "qr", "microQR", "dataMatrix", "aztec", "pdf417", "microPDF417", "code128", "code39",
@@ -31,7 +31,7 @@ struct ScannerOptions: Decodable {
     dedupeSeconds = try c.decodeIfPresent(Double.self, forKey: .dedupeSeconds) ?? dedupeSeconds
     camera = try c.decodeIfPresent(String.self, forKey: .camera) ?? camera
     timeoutSeconds = try c.decodeIfPresent(Double.self, forKey: .timeoutSeconds) ?? timeoutSeconds
-    beep = try c.decodeIfPresent(Bool.self, forKey: .beep) ?? beep
+    beep = try c.decodeIfPresent(String.self, forKey: .beep) ?? beep
   }
 
   static func parse(_ json: String) throws -> ScannerOptions {
