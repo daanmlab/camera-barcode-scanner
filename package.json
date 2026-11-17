@@ -146,6 +146,15 @@
       ]
     },
     {
+      "name": "beep",
+      "title": "Beep on Scan",
+      "label": "Beep on Scan",
+      "description": "Play a short beep each time a code is read.",
+      "type": "checkbox",
+      "required": false,
+      "default": true
+    },
+    {
       "name": "codesQr",
       "title": "Code Types",
       "label": "QR Codes",
